@@ -8,7 +8,7 @@ This is a fully functional frontend quiz application built with **React**, **Tai
 
 ### 👨‍🎓 For Users
 
-* **Email-based login** ---
+* **Email-based login**
 * **Randomized** beginner-level questions on HTML, CSS, and Tailwind
 * **Timer** with one-hour limit, plus visual warnings at 20 and 5 minutes
 * **Answer review** after submission
@@ -103,6 +103,8 @@ Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 📁 Project Structure
 
+```text
+
 src/
 ├── components/
 │   ├── Login.jsx
@@ -114,6 +116,8 @@ src/
 ├── firebase.js
 ├── App.jsx
 └── main.jsx
+
+```
 
 ---
 
