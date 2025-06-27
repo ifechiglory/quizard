@@ -23,6 +23,11 @@ const ResultPage = ({ score, answers, onLogout }) => {
     navigate("/", { replace: true });
   };
 
+  if (!answers || answers.length === 0) {
+    return (
+      <p className="text-center mt-10 text-gray-500">Loading your result...</p>
+    );
+  }
   return (
     <div className="p-8 max-w-xl mx-auto text-center">
       <h1 className="text-3xl font-bold mb-4">🎉 Quiz Completed</h1>

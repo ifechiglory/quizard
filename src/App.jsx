@@ -1,16 +1,16 @@
 // App.jsx
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useNavigate
 } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import QuizPage from "./components/QuizPage";
 import ResultPage from "./components/ResultPage";
 import AdminPage from "./components/AdminPage";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
 function App() {
@@ -18,6 +18,8 @@ function App() {
   const [userName, setUserName] = useState(null);
   const [quizDone, setQuizDone] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const checkIfSubmitted = async () => {
@@ -37,11 +39,50 @@ function App() {
     checkIfSubmitted();
   }, [userEmail]);
 
-  const handleLogin = (email, name) => {
+  // const handleLogin = (email, name) => {
+  //   setUserEmail(email);
+  //   setUserName(name);
+  // };
+
+  const handleLogin = async (email, name) => {
+    if (!email || !name) {
+      alert("Please enter both email and name");
+      return;
+    }
+
     setUserEmail(email);
     setUserName(name);
-  };
 
+    if (email === "admin@example.com") {
+      navigate("/admin");
+      return;
+    }
+
+    const userRef = doc(db, "quizResults", email);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      setQuizDone(true);
+      setQuizResult({
+        score: data.score || 0,
+        answers: data.answers || [],
+        submittedAt: data.submittedAt || null,
+      });
+      navigate("/result");
+    } else {
+      await setDoc(userRef, {
+        name,
+        email,
+        startedAt: new Date().toISOString(),
+      });
+      navigate("/quiz");
+    }
+  };
+  
+  
+
+  
   const handleLogout = () => {
     setUserEmail(null);
     setUserName(null);
@@ -55,7 +96,6 @@ function App() {
   };
 
   return (
-    <Router>
       <Routes>
         <Route
           path="/"
@@ -83,7 +123,6 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
   );
 }
 
