@@ -1,0 +1,503 @@
+[
+  {
+    "question": "What does HTML stand for?",
+    "options": [
+      "HyperText Markup Language",
+      "Hyper Tool Markup Language",
+      "Hyperlinks and Text Markup Language",
+      "Home Tool Markup Language"
+    ],
+    "answer": "HyperText Markup Language"
+  },
+  {
+    "question": "Which HTML tag is used to define a paragraph?",
+    "options": [
+      "<para>",
+      "<p>",
+      "<paragraph>",
+      "<text>"
+    ],
+    "answer": "<p>"
+  },
+  {
+    "question": "Which tag is used to insert an image in HTML?",
+    "options": [
+      "<img>",
+      "<src>",
+      "<image>",
+      "<pic>"
+    ],
+    "answer": "<img>"
+  },
+  {
+    "question": "Which attribute is used to provide a unique name to an HTML element?",
+    "options": [
+      "id",
+      "name",
+      "class",
+      "type"
+    ],
+    "answer": "id"
+  },
+  {
+    "question": "Which tag is used to define a hyperlink in HTML?",
+    "options": [
+      "<a>",
+      "<link>",
+      "<href>",
+      "<hyperlink>"
+    ],
+    "answer": "<a>"
+  },
+  {
+    "question": "What is the correct HTML element for inserting a line break?",
+    "options": [
+      "<break>",
+      "<lb>",
+      "<br>",
+      "<hr>"
+    ],
+    "answer": "<br>"
+  },
+  {
+    "question": "Which tag is used for the largest heading?",
+    "options": [
+      "<heading>",
+      "<h1>",
+      "<h6>",
+      "<head>"
+    ],
+    "answer": "<h1>"
+  },
+  {
+    "question": "What does the following CSS rule do?\n\n```css\np::first-letter {\n  color: red;\n  font-size: 200%;\n}\n```",
+    "options": [
+      "Makes the first word of every paragraph red and twice as big",
+      "Applies red color and large font to the first letter of every paragraph",
+      "Applies a red border around the paragraph's first line",
+      "Changes the text color of the entire paragraph to red"
+    ],
+    "answer": "Applies red color and large font to the first letter of every paragraph"
+  },
+  {
+    "question": "Which HTML element defines the title of a document?",
+    "options": [
+      "<meta>",
+      "<title>",
+      "<head>",
+      "<header>"
+    ],
+    "answer": "<title>"
+  },
+  {
+    "question": "Which tag is used to create a numbered list?",
+    "options": [
+      "<ol>",
+      "<ul>",
+      "<li>",
+      "<dl>"
+    ],
+    "answer": "<ol>"
+  },
+  {
+    "question": "What does <input type='checkbox'> create?",
+    "options": [
+      "Radio button",
+      "Checkbox",
+      "Dropdown",
+      "Text field"
+    ],
+    "answer": "Checkbox"
+  },
+  {
+    "question": "Which tag is used to group inline-elements in HTML?",
+    "options": [
+      "<group>",
+      "<span>",
+      "<div>",
+      "<p>"
+    ],
+    "answer": "<span>"
+  },
+  {
+    "question": "Which HTML tag is used to define an internal style?",
+    "options": [
+      "<css>",
+      "<style>",
+      "<script>",
+      "<link>"
+    ],
+    "answer": "<style>"
+  },
+  {
+    "question": "Which input type defines a slider control?",
+    "options": [
+      "range",
+      "slider",
+      "scroll",
+      "bar"
+    ],
+    "answer": "range"
+  },
+  {
+    "question": "What does the <thead> element do?",
+    "options": [
+      "Groups header content",
+      "Creates a bold row",
+      "Inserts a footer",
+      "Applies CSS"
+    ],
+    "answer": "Groups header content"
+  },
+  {
+    "question": "Which tag is used to define a table row?",
+    "options": [
+      "<th>",
+      "<tr>",
+      "<td>",
+      "<row>"
+    ],
+    "answer": "<tr>"
+  },
+  {
+    "question": "What is the correct syntax to comment in HTML?",
+    "options": [
+      "<!-- comment -->",
+      "// comment",
+      "# comment",
+      "/* comment */"
+    ],
+    "answer": "<!-- comment -->"
+  },
+  {
+    "question": "Which tag creates a dropdown in HTML?",
+    "options": [
+      "<select>",
+      "<input type='dropdown'>",
+      "<dropdown>",
+      "<option>"
+    ],
+    "answer": "<select>"
+  },
+  {
+    "question": "What is the root element of an HTML document?",
+    "options": [
+      "<html>",
+      "<head>",
+      "<body>",
+      "<doc>"
+    ],
+    "answer": "<html>"
+  },
+  {
+    "question": "Which property is used to change text color in CSS?",
+    "options": [
+      "text-color",
+      "color",
+      "font-color",
+      "style"
+    ],
+    "answer": "color"
+  },
+  {
+    "question": "Which CSS property controls the text size?",
+    "options": [
+      "font-size",
+      "text-size",
+      "size",
+      "text-style"
+    ],
+    "answer": "font-size"
+  },
+  {
+    "question": "Which is the correct CSS syntax to select an element with id 'main'?",
+    "options": [
+      "#main",
+      ".main",
+      "*main",
+      "main"
+    ],
+    "answer": "#main"
+  },
+  {
+    "question": "How do you apply a class in CSS?",
+    "options": [
+      ".classname",
+      "#classname",
+      "*classname",
+      "/classname"
+    ],
+    "answer": ".classname"
+  },
+  {
+    "question": "What property is used to change background color?",
+    "options": [
+      "background-color",
+      "bg-color",
+      "color",
+      "bg"
+    ],
+    "answer": "background-color"
+  },
+  {
+    "question": "Which CSS unit is relative to the parent?",
+    "options": [
+      "em",
+      "px",
+      "%",
+      "vw"
+    ],
+    "answer": "em"
+  },
+  {
+    "question": "Which property is used to make text italic?",
+    "options": [
+      "font-style",
+      "font-weight",
+      "text-style",
+      "italic"
+    ],
+    "answer": "font-style"
+  },
+  {
+    "question": "What value makes a CSS element invisible but keeps its space?",
+    "options": [
+      "visibility: hidden",
+      "display: none",
+      "opacity: 0",
+      "none"
+    ],
+    "answer": "visibility: hidden"
+  },
+  {
+    "question": "How do you select all <p> tags inside a div?",
+    "options": [
+      "div p",
+      "div > p",
+      "div.p",
+      "p div"
+    ],
+    "answer": "div p"
+  },
+  {
+    "question": "What styles do the following classes apply?\n\nclass=\"text-center text-lg font-bold\"",
+    "options": [
+      "Aligns text to the left, sets font size to large, makes text italic",
+      "Centers text, sets large font size, makes text bold",
+      "Justifies text, adds margin, sets font size to medium",
+      "Left-aligns text, makes text bold, increases line height"
+    ],
+    "answer": "Centers text, sets large font size, makes text bold"
+  },
+  {
+    "question": "What styles do the following classes apply?\n\nclass=\"bg-blue-500 text-white p-4 rounded\"",
+    "options": [
+      "Sets white background, blue text, padding of 4px, and no border-radius",
+      "Applies blue background, white text, 1rem padding, and rounded corners",
+      "Makes text bold, adds a shadow, and sets height to 4rem",
+      "Only changes text color and padding"
+    ],
+    "answer": "Applies blue background, white text, 1rem padding, and rounded corners"
+  },
+  {
+    "question": "What styles do the following classes apply?\n\nclass=\"flex items-center justify-between\"",
+    "options": [
+      "Uses grid layout, centers all items vertically and horizontally",
+      "Enables flexbox, aligns items to the start and wraps them",
+      "Enables flexbox, aligns items vertically in center, distributes space between them",
+      "Adds margins and paddings to all sides"
+    ],
+    "answer": "Enables flexbox, aligns items vertically in center, distributes space between them"
+  },
+  {
+    "question": "What is a key difference between Flexbox and CSS Grid?",
+    "options": [
+      "Flexbox is used for two-dimensional layouts, while Grid is used for one-dimensional layouts.",
+      "Grid is better for text alignment, while Flexbox is only for positioning images.",
+      "Flexbox is best for one-dimensional layouts (either row or column), while Grid is best for two-dimensional layouts (rows and columns).",
+      "They are exactly the same but have different names."
+    ],
+    "answer": "Flexbox is best for one-dimensional layouts (either row or column), while Grid is best for two-dimensional layouts (rows and columns)."
+  },
+  {
+    "question": "What property controls spacing outside the border?",
+    "options": [
+      "margin",
+      "padding",
+      "border",
+      "spacing"
+    ],
+    "answer": "margin"
+  },
+  {
+    "question": "What property controls spacing inside the border?",
+    "options": [
+      "padding",
+      "margin",
+      "border-spacing",
+      "space"
+    ],
+    "answer": "padding"
+  },
+  {
+    "question": "Which value makes text bold?",
+    "options": [
+      "bold",
+      "strong",
+      "font-bold",
+      "bolder"
+    ],
+    "answer": "bold"
+  },
+  {
+    "question": "How do you center text in CSS?",
+    "options": [
+      "text-align: center",
+      "align: center",
+      "center-text: true",
+      "text-center: true"
+    ],
+    "answer": "text-align: center"
+  },
+  {
+    "question": "What property is used for rounded corners?",
+    "options": [
+      "border-radius",
+      "corner",
+      "radius",
+      "curve"
+    ],
+    "answer": "border-radius"
+  },
+  {
+    "question": "Which statement correctly describes the difference between inline, internal, and external stylesheets?",
+    "options": [
+      "Inline styles are written in a separate .css file, internal styles are added using the style attribute, and external styles are placed in the head tag.",
+      "Inline styles are added directly to an HTML element, internal styles are written inside a `<style>` tag, and external styles are written in a separate .css file and linked.",
+      "Internal styles are always applied last, and inline styles override external styles.",
+      "External styles are always stronger than internal and inline styles."
+    ],
+    "answer": "Inline styles are added directly to an HTML element, internal styles are written inside a `<style>` tag, and external styles are written in a separate .css file and linked."
+  }
+  ,
+  {
+    "question": "How do you make a flex container?",
+    "options": [
+      "display: flex",
+      "flex: true",
+      "container: flex",
+      "flex-box: enable"
+    ],
+    "answer": "display: flex"
+  },
+  {
+    "question": "Which pseudo-class selects the first child?",
+    "options": [
+      ":first-child",
+      ":first",
+      "::first-child",
+      ":nth(1)"
+    ],
+    "answer": ":first-child"
+  },
+  {
+    "question": "What is the Tailwind class for setting margin top?",
+    "options": [
+      "mt-4",
+      "m-top-4",
+      "margin-top-4",
+      "top-m-4"
+    ],
+    "answer": "mt-4"
+  },
+  {
+    "question": "Which class sets background to red in Tailwind?",
+    "options": [
+      "bg-red-500",
+      "background-red",
+      "red-bg",
+      "bg-500-red"
+    ],
+    "answer": "bg-red-500"
+  },
+  {
+    "question": "What is the Tailwind class for flexbox?",
+    "options": [
+      "flex",
+      "d-flex",
+      "flexbox",
+      "display-flex"
+    ],
+    "answer": "flex"
+  },
+  {
+    "question": "Which class adds horizontal padding in Tailwind?",
+    "options": [
+      "px-4",
+      "ph-4",
+      "padding-x-4",
+      "p-horizontal-4"
+    ],
+    "answer": "px-4"
+  },
+  {
+    "question": "What is the Tailwind class for rounded corners?",
+    "options": [
+      "rounded",
+      "corner",
+      "border-radius",
+      "curve"
+    ],
+    "answer": "rounded"
+  },
+  {
+    "question": "Which class centers text in Tailwind?",
+    "options": [
+      "text-center",
+      "center",
+      "text-align-center",
+      "align-center"
+    ],
+    "answer": "text-center"
+  },
+  {
+    "question": "What class is used for font boldness in Tailwind?",
+    "options": [
+      "font-bold",
+      "bold",
+      "fw-bold",
+      "text-bold"
+    ],
+    "answer": "font-bold"
+  },
+  {
+    "question": "How do you apply grid layout in Tailwind?",
+    "options": [
+      "grid",
+      "display-grid",
+      "gridbox",
+      "layout-grid"
+    ],
+    "answer": "grid"
+  },
+  {
+    "question": "Which class hides an element?",
+    "options": [
+      "hidden",
+      "invisible",
+      "display-none",
+      "d-none"
+    ],
+    "answer": "hidden"
+  },
+  {
+    "question": "Which Tailwind class sets full width?",
+    "options": [
+      "w-full",
+      "width-100",
+      "full-width",
+      "w-100"
+    ],
+    "answer": "w-full"
+  }
+]
