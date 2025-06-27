@@ -1,20 +1,15 @@
-// Import the functions you need from the SDKs you need
+// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore } from "firebase/firestore";
 
-  
 const firebaseConfig = {
-  apiKey: "AIzaSyAxT7VSj98yjCPB7f6BiR2kiIzaAH3bZtA",
-  authDomain: "frontend-quiz-app-47df7.firebaseapp.com",
-  databaseURL: "https://frontend-quiz-app-47df7-default-rtdb.firebaseio.com",
-  projectId: "frontend-quiz-app-47df7",
-  storageBucket: "frontend-quiz-app-47df7.firebasestorage.app",
-  messagingSenderId: "35750238770",
-  appId: "1:35750238770:web:2188fb70eb505f36b67a2b",
-  measurementId: "G-YBHCFB89T5"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-export { db };
+export const db = getFirestore(app);
