@@ -49,14 +49,15 @@ function App() {
       alert("Please enter both email and name");
       return;
     }
-
-    setUserEmail(email);
-    setUserName(name);
-
     if (email === "admin@example.com") {
+      setUserEmail(email);
+      setUserName(name);
       navigate("/admin");
       return;
     }
+
+    setUserEmail(email);
+    setUserName(name);
 
     const userRef = doc(db, "quizResults", email);
     const userSnap = await getDoc(userRef);
