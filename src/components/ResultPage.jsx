@@ -60,13 +60,13 @@ const ResultPage = ({
       <div className="flex justify-center gap-4 mt-6 mb-8">
         <button
           onClick={() => setShowAnswers(!showAnswers)}
-          className="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
         >
           {showAnswers ? "Hide Answers" : "View Answers"}
         </button>
         <button
           onClick={handleLogout}
-          className="px-5 py-2 bg-gray-700 text-white rounded hover:bg-gray-800"
+          className="px-5 py-2 bg-red-700 text-white rounded hover:bg-red-800"
         >
           Logout
         </button>

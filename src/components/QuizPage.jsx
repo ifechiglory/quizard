@@ -145,7 +145,7 @@ const QuizPage = ({
       <div className="text-center mt-10">
         <button
           onClick={() => setShowConfirm(true)}
-          className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
+          className="px-6 py-3 bg-purple-600 text-white rounded hover:bg-purple-700"
         >
           Submit Quiz
         </button>
@@ -153,7 +153,7 @@ const QuizPage = ({
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-md max-w-sm w-full text-center">
             <h2 className="text-lg font-bold mb-2">Confirm Submission</h2>
             {unansweredCount > 0 && (
@@ -172,7 +172,7 @@ const QuizPage = ({
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500"
               >
                 Cancel
               </button>
