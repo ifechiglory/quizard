@@ -1,17 +1,31 @@
 // components/QuizPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import questions from "../data/questions.json";
 
-const QuizPage = ({ user, userName, onSubmit }) => {
-  const [timeLeft, setTimeLeft] = useState(3600); // 1 hour
-  const [answers, setAnswers] = useState([]);
+const QuizPage = ({
+  user,
+  userName,
+  onSubmit,
+  initialAnswers = [],
+  initialTimeLeft = 3600,
+}) => {
+  const [timeLeft, setTimeLeft] = useState(initialTimeLeft);
+  const [answers, setAnswers] = useState(initialAnswers);
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Submit Handler (move to top so it's defined before useEffect)
+  const unansweredCount = questions.length - answers.filter(Boolean).length;
+
+  const formatTime = (s) =>
+    `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(
+      2,
+      "0"
+    )}`;
+
+  // ✅ Safe submit function
   const handleSubmit = useCallback(async () => {
     const finalAnswers = questions.map((q, idx) => {
       const userAnswer = answers[idx]?.selected || "Unanswered";
@@ -26,7 +40,6 @@ const QuizPage = ({ user, userName, onSubmit }) => {
       (acc, q) => (q.selected === q.answer ? acc + 1 : acc),
       0
     );
-
     const percentage = (score / questions.length) * 100;
     const grade =
       percentage >= 80
@@ -37,27 +50,29 @@ const QuizPage = ({ user, userName, onSubmit }) => {
         ? "C"
         : "F";
 
-    await updateDoc(doc(db, "quizResults", user), {
-      answers: finalAnswers,
-      score,
-      percentage,
-      grade,
-      submittedAt: new Date().toISOString(),
-      timeSpent: 3600 - timeLeft,
-    });
+    if (user && score !== undefined && finalAnswers) {
+      await updateDoc(doc(db, "quizResults", user), {
+        score,
+        answers: finalAnswers,
+        percentage,
+        grade,
+        submittedAt: new Date().toISOString(),
+        timeSpent: 3600 - timeLeft,
+      });
 
-    onSubmit({
-      score,
-      answers: finalAnswers,
-      percentage,
-      grade,
-      timeSpent: 3600 - timeLeft,
-    });
+      onSubmit({
+        score,
+        answers: finalAnswers,
+        percentage,
+        grade,
+        timeSpent: 3600 - timeLeft,
+      });
 
-    navigate("/result");
-  }, [answers, user, timeLeft, onSubmit, navigate]);
+      navigate("/result");
+    }
+  }, [answers, user, timeLeft, navigate, onSubmit]);
 
-  // ⏱ Timer Effect
+  // 🕐 Timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
@@ -69,12 +84,11 @@ const QuizPage = ({ user, userName, onSubmit }) => {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, [handleSubmit]);
 
-  // 📝 Answer Selection
-  const handleSelect = (questionIndex, choice) => {
+  // 📝 Answer selection
+  const handleSelect = async (questionIndex, choice) => {
     const updated = [...answers];
     updated[questionIndex] = {
       question: questions[questionIndex].question,
@@ -82,15 +96,21 @@ const QuizPage = ({ user, userName, onSubmit }) => {
       answer: questions[questionIndex].answer,
     };
     setAnswers(updated);
+
+    // Save progress to Firestore
+    if (user) {
+      await setDoc(
+        doc(db, "quizResults", user),
+        {
+          answers: updated,
+          name: userName || "Anonymous",
+          email: user,
+          timeLeft,
+        },
+        { merge: true }
+      );
+    }
   };
-
-  const unansweredCount = questions.length - answers.filter(Boolean).length;
-
-  const formatTime = (s) =>
-    `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(
-      2,
-      "0"
-    )}`;
 
   return (
     <div className="min-h-screen px-6 pt-8 pb-20 max-w-4xl mx-auto">
@@ -133,7 +153,7 @@ const QuizPage = ({ user, userName, onSubmit }) => {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-md max-w-sm w-full text-center">
             <h2 className="text-lg font-bold mb-2">Confirm Submission</h2>
             {unansweredCount > 0 && (
@@ -152,7 +172,7 @@ const QuizPage = ({ user, userName, onSubmit }) => {
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500"
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
                 Cancel
               </button>

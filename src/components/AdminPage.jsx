@@ -1,7 +1,7 @@
 // components/AdminPage.jsx
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const AdminPage = () => {
   const [results, setResults] = useState([]);
@@ -9,65 +9,51 @@ const AdminPage = () => {
   useEffect(() => {
     const fetchResults = async () => {
       const snapshot = await getDocs(collection(db, "quizResults"));
-      const filtered = snapshot.docs
-        .map((doc) => doc.data())
-        .filter((res) => res.email !== "admin@example.com" && res.submittedAt); // exclude admin + only submitted users
-      setResults(filtered);
+      const data = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((r) => r.score !== undefined); // Only show completed
+      setResults(data);
     };
+
     fetchResults();
   }, []);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        📊 Student Quiz Submissions
-      </h1>
-      {results.length === 0 ? (
-        <p className="text-center text-gray-600">No submissions yet.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border text-sm">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 border">Name</th>
-                <th className="p-2 border">Email</th>
-                <th className="p-2 border">Score</th>
-                <th className="p-2 border">Percentage</th>
-                <th className="p-2 border">Grade</th>
-                <th className="p-2 border">Time Spent</th>
-                <th className="p-2 border">Total Questions</th>
-                <th className="p-2 border">Unanswered</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.map((r, idx) => {
-                const unanswered = Array.isArray(r.answers)
-                  ? r.answers.filter(
-                      (ans) => !ans.selected || ans.selected === "Unanswered"
-                    ).length
-                  : "-";
+    <div className="p-6 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">📊 Admin Dashboard</h1>
 
-                return (
-                  <tr key={idx} className="text-center">
-                    <td className="p-2 border">{r.name}</td>
-                    <td className="p-2 border">{r.email}</td>
-                    <td className="p-2 border">{r.score}</td>
-                    <td className="p-2 border">
-                      {Number(r.percentage)?.toFixed(1)}%
-                    </td>
-                    <td className="p-2 border">{r.grade}</td>
-                    <td className="p-2 border">
-                      {Math.floor(r.timeSpent / 60)}m {r.timeSpent % 60}s
-                    </td>
-                    <td className="p-2 border">{r.answers?.length || 0}</td>
-                    <td className="p-2 border">{unanswered}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="overflow-auto">
+        <table className="w-full table-auto border">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border px-4 py-2">Name</th>
+              <th className="border px-4 py-2">Email</th>
+              <th className="border px-4 py-2">Score</th>
+              <th className="border px-4 py-2">Percentage</th>
+              <th className="border px-4 py-2">Grade</th>
+              <th className="border px-4 py-2">Time Spent (mins)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((r, idx) => (
+              <tr key={idx} className="text-center">
+                <td className="border px-4 py-2">{r.name || "-"}</td>
+                <td className="border px-4 py-2">{r.email || r.id}</td>
+                <td className="border px-4 py-2">{r.score}</td>
+                <td className="border px-4 py-2">
+                  {typeof r.percentage === "number"
+                    ? `${r.percentage.toFixed(1)}%`
+                    : "-"}
+                </td>
+                <td className="border px-4 py-2">{r.grade || "-"}</td>
+                <td className="border px-4 py-2">
+                  {Math.ceil((r.timeSpent || 0) / 60)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
