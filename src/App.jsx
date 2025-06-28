@@ -1,94 +1,80 @@
 // App.jsx
-import React, { useState, useEffect } from "react";
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate
-} from "react-router-dom";
+import React, { useState } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import QuizPage from "./components/QuizPage";
 import ResultPage from "./components/ResultPage";
 import AdminPage from "./components/AdminPage";
-import { collection, getDocs, query, where, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 function App() {
   const [userEmail, setUserEmail] = useState(null);
   const [userName, setUserName] = useState(null);
   const [quizDone, setQuizDone] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
+  const [quizTime, setQuizTime] = useState(3600);
+
   const navigate = useNavigate();
-
-
-  useEffect(() => {
-    const checkIfSubmitted = async () => {
-      if (userEmail) {
-        const q = query(
-          collection(db, "quizResults"),
-          where("email", "==", userEmail)
-        );
-        const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          const data = snapshot.docs[0].data();
-          setQuizDone(true);
-          setQuizResult({ score: data.score, answers: data.answers });
-        }
-      }
-    };
-    checkIfSubmitted();
-  }, [userEmail]);
-
-  // const handleLogin = (email, name) => {
-  //   setUserEmail(email);
-  //   setUserName(name);
-  // };
 
   const handleLogin = async (email, name) => {
     if (!email || !name) {
       alert("Please enter both email and name");
       return;
     }
+
     if (email === "admin@example.com") {
-      setUserEmail(email);
-      setUserName(name);
       navigate("/admin");
       return;
     }
 
-    setUserEmail(email);
-    setUserName(name);
-
     const userRef = doc(db, "quizResults", email);
-    const userSnap = await getDoc(userRef);
+    const snap = await getDoc(userRef);
 
-    if (userSnap.exists()) {
-      const data = userSnap.data();
-      setQuizDone(true);
-      setQuizResult({
-        score: data.score || 0,
-        answers: data.answers || [],
-        submittedAt: data.submittedAt || null,
-      });
-      navigate("/result");
+    if (snap.exists()) {
+      const data = snap.data();
+
+      if (data.score !== undefined && data.answers?.length) {
+        // Quiz already submitted
+        setUserEmail(email);
+        setUserName(data.name || name);
+        setQuizResult({
+          score: data.score,
+          answers: data.answers,
+          percentage: data.percentage,
+          grade: data.grade,
+          timeSpent: data.timeSpent,
+        });
+        setQuizDone(true);
+        navigate("/result");
+      } else {
+        // Started but not submitted
+        setUserEmail(email);
+        setUserName(data.name || name);
+        setQuizTime(data.timeLeft || 3600);
+        navigate("/quiz");
+      }
     } else {
+      // First login
       await setDoc(userRef, {
         name,
         email,
         startedAt: new Date().toISOString(),
+        timeLeft: 3600,
       });
+      setUserEmail(email);
+      setUserName(name);
+      setQuizTime(3600);
       navigate("/quiz");
     }
   };
-  
-  
 
-  
   const handleLogout = () => {
     setUserEmail(null);
     setUserName(null);
-    setQuizDone(false);
     setQuizResult(null);
+    setQuizDone(false);
+    setQuizTime(3600);
   };
 
   const handleSubmit = (result) => {
@@ -97,33 +83,36 @@ function App() {
   };
 
   return (
-      <Routes>
-        <Route
-          path="/"
-          element={
-            userEmail ? (
-              quizDone ? (
-                <ResultPage
-                  score={quizResult?.score || 0}
-                  answers={quizResult?.answers || []}
-                  onLogout={handleLogout}
-                />
-              ) : (
-                <QuizPage
-                  user={userEmail}
-                  userName={userName}
-                  onSubmit={handleSubmit}
-                  onFinish={() => setQuizDone(true)}
-                />
-              )
+    <Routes>
+      <Route
+        path="/"
+        element={
+          userEmail ? (
+            quizDone ? (
+              <ResultPage
+                score={quizResult?.score || 0}
+                answers={quizResult?.answers || []}
+                percentage={quizResult?.percentage}
+                grade={quizResult?.grade}
+                timeSpent={quizResult?.timeSpent}
+                onLogout={handleLogout}
+              />
             ) : (
-              <LoginPage onLogin={handleLogin} />
+              <QuizPage
+                user={userEmail}
+                userName={userName}
+                onSubmit={handleSubmit}
+                initialTime={quizTime}
+              />
             )
-          }
-        />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          ) : (
+            <LoginPage onLogin={handleLogin} />
+          )
+        }
+      />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 }
 

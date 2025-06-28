@@ -1,132 +1,169 @@
-// 5. components/QuizPage.jsx
-import React, { useEffect, useState } from "react";
-import questionsData from "../data/questions.json";
-import { collection, addDoc } from "firebase/firestore";
+// components/QuizPage.jsx
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import questions from "../data/questions.json";
 
-const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
-
-const QuizPage = ({ user, userName, onSubmit, onFinish }) => {
-  const [questions, setQuestions] = useState([]);
-  const [current, setCurrent] = useState(0);
+const QuizPage = ({ user, userName, onSubmit }) => {
+  const [timeLeft, setTimeLeft] = useState(3600); // 1 hour
   const [answers, setAnswers] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(60 * 60); // 1 hour in seconds
-  const [showWarning, setShowWarning] = useState({
-    twenty: false,
-    five: false,
-  });
+  const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
 
+  // ✅ Submit Handler (move to top so it's defined before useEffect)
+  const handleSubmit = useCallback(async () => {
+    const finalAnswers = questions.map((q, idx) => {
+      const userAnswer = answers[idx]?.selected || "Unanswered";
+      return {
+        question: q.question,
+        selected: userAnswer,
+        answer: q.answer,
+      };
+    });
+
+    const score = finalAnswers.reduce(
+      (acc, q) => (q.selected === q.answer ? acc + 1 : acc),
+      0
+    );
+
+    const percentage = (score / questions.length) * 100;
+    const grade =
+      percentage >= 80
+        ? "A"
+        : percentage >= 60
+        ? "B"
+        : percentage >= 50
+        ? "C"
+        : "F";
+
+    await updateDoc(doc(db, "quizResults", user), {
+      answers: finalAnswers,
+      score,
+      percentage,
+      grade,
+      submittedAt: new Date().toISOString(),
+      timeSpent: 3600 - timeLeft,
+    });
+
+    onSubmit({
+      score,
+      answers: finalAnswers,
+      percentage,
+      grade,
+      timeSpent: 3600 - timeLeft,
+    });
+
+    navigate("/result");
+  }, [answers, user, timeLeft, onSubmit, navigate]);
+
+  // ⏱ Timer Effect
   useEffect(() => {
-    const randomQuestions = shuffle([...questionsData]).slice(0, 50);
-    setQuestions(randomQuestions);
-  }, []);
-
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      const finalAnswers = answers;
-      const score = finalAnswers.filter((a) => a.selected === a.answer).length;
-      saveResultToFirestore(user, userName, finalAnswers, score, 60 * 60);
-      onSubmit({ score, answers: finalAnswers });
-      onFinish();
-      return;
-    }
-
-    if (timeLeft === 20 * 60 && !showWarning.twenty) {
-      alert("⏰ 20 minutes remaining!");
-      setShowWarning((prev) => ({ ...prev, twenty: true }));
-    }
-    if (timeLeft === 5 * 60 && !showWarning.five) {
-      alert("⚠️ 5 minutes remaining! Finish up!");
-      setShowWarning((prev) => ({ ...prev, five: true }));
-    }
-
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft, user, userName, answers, onFinish, onSubmit, showWarning]);
-
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = (seconds % 60).toString().padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
-  const saveResultToFirestore = async (
-    user,
-    name,
-    answers,
-    score,
-    timeSpent
-  ) => {
-    try {
-      await addDoc(collection(db, "quizResults"), {
-        name,
-        email: user,
-        answers,
-        score,
-        percentage: Math.round((score / answers.length) * 100),
-        timeSpent,
-        submittedAt: new Date().toISOString(),
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleSubmit();
+          return 0;
+        }
+        return prev - 1;
       });
-    } catch (error) {
-      console.error("Error saving result:", error);
-    }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [handleSubmit]);
+
+  // 📝 Answer Selection
+  const handleSelect = (questionIndex, choice) => {
+    const updated = [...answers];
+    updated[questionIndex] = {
+      question: questions[questionIndex].question,
+      selected: choice,
+      answer: questions[questionIndex].answer,
+    };
+    setAnswers(updated);
   };
 
-  const handleAnswer = (option) => {
-    const updatedAnswers = [
-      ...answers,
-      { ...questions[current], selected: option },
-    ];
-    setAnswers(updatedAnswers);
+  const unansweredCount = questions.length - answers.filter(Boolean).length;
 
-    if (current + 1 === questions.length) {
-      const finalAnswers = updatedAnswers;
-      const score = finalAnswers.filter((a) => a.selected === a.answer).length;
-      saveResultToFirestore(
-        user,
-        userName,
-        finalAnswers,
-        score,
-        60 * 60 - timeLeft
-      );
-      onSubmit({ score, answers: finalAnswers });
-      onFinish();
-    } else {
-      setCurrent(current + 1);
-    }
-  };
-
-  if (!questions.length)
-    return <p className="p-8 text-center">Loading questions...</p>;
-
-  const q = questions[current];
-  const timerClass = timeLeft <= 5 * 60 ? "text-red-600" : "text-blue-600";
+  const formatTime = (s) =>
+    `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(
+      2,
+      "0"
+    )}`;
 
   return (
-    <div className="p-8 max-w-xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">
-          Question {current + 1} of {questions.length}
-        </h2>
-        <span className={`${timerClass} font-semibold`}>
-          Time Left: {formatTime(timeLeft)}
-        </span>
-      </div>
-      <p className="mb-4 text-lg">{q.question}</p>
-      <div className="space-y-2">
-        {q.options.map((opt, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleAnswer(opt)}
-            className="block w-full px-4 py-2 border rounded hover:bg-blue-100"
-          >
-            {opt}
-          </button>
+    <div className="min-h-screen px-6 pt-8 pb-20 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-6">Welcome, {userName} 👋</h1>
+
+      <form className="space-y-8">
+        {questions.map((q, index) => (
+          <div key={index} className="border p-4 rounded shadow-sm">
+            <p className="font-medium mb-2">
+              {index + 1}. {q.question}
+            </p>
+            <div className="space-y-2">
+              {q.options.map((opt, i) => (
+                <label key={i} className="block">
+                  <input
+                    type="radio"
+                    name={`question-${index}`}
+                    value={opt}
+                    checked={answers[index]?.selected === opt}
+                    onChange={() => handleSelect(index, opt)}
+                    className="mr-2"
+                  />
+                  {opt}
+                </label>
+              ))}
+            </div>
+          </div>
         ))}
+      </form>
+
+      {/* Submit Button */}
+      <div className="text-center mt-10">
+        <button
+          onClick={() => setShowConfirm(true)}
+          className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Submit Quiz
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md max-w-sm w-full text-center">
+            <h2 className="text-lg font-bold mb-2">Confirm Submission</h2>
+            {unansweredCount > 0 && (
+              <p className="text-red-600 text-sm mb-2">
+                You have {unansweredCount} unanswered question
+                {unansweredCount > 1 ? "s" : ""}.
+              </p>
+            )}
+            <p className="mb-4">Are you sure you want to submit?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Yes, Submit
+              </button>
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Timer */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-3 px-6 text-center font-medium shadow">
+        Time Left: <span className="text-blue-600">{formatTime(timeLeft)}</span>
       </div>
     </div>
   );
